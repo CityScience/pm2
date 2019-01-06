@@ -10,9 +10,9 @@ cd $file_path/start-app
 #
 $pm2 delete all
 
-$pm2 start "node -e 'setTimeout(function() { }, 100000); console.log(process.env.TEST)'" -l test.log --merge-logs
-should 'should have started command' 'online' 1
-should 'should have not been restarted' 'restart_time: 0' 1
+$pm2 start "node -e 'setTimeout(function() { }, 100000); console.log(process.env.TEST)'" -l test.log --merge-logs --name node-test
+should 'should have started command from commandline' 'online' 1
+should 'should have not been restarted from commandline' 'restart_time: 0' 1
 
 cat test.log | grep "undefined" &> /dev/null
 spec "should have printed undefined env var"
@@ -20,8 +20,8 @@ spec "should have printed undefined env var"
 TEST='ok' $pm2 restart 0 --update-env
 cat test.log | grep "ok" &> /dev/null
 
-should 'should have started command' 'online' 1
-should 'should have not been restarted' 'restart_time: 1' 1
+should 'should have started command by id' 'online' 1
+should 'should have not been restarted by id' 'restart_time: 1' 1
 spec "should have printed undefined env var"
 
 #
@@ -30,7 +30,7 @@ spec "should have printed undefined env var"
 $pm2 delete all
 
 $pm2 start ecosystem.config.js
-should 'should have started command' 'online' 1
-should 'should have not been restarted' 'restart_time: 0' 1
+should 'should have started command from config' 'online' 1
+should 'should have not been restarted from config' 'restart_time: 0' 1
 cat test-conf.log | grep "test_val" 2> /dev/null
-spec "should have printed the test_val"
+spec "should have printed the test_val from config"
